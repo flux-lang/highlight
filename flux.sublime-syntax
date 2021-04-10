@@ -1,0 +1,432 @@
+%YAML 1.2
+---
+# See http://www.sublimetext.com/docs/3/syntax.html
+# This syntax file is not 'best-of-the-best', but it does it's job. Any improvements appreciated
+file_extensions:
+  - flux
+scope: source.flux
+variables:
+  name: '\b[A-Za-z_]\w*\b'
+  math_op: '\+|-|\*|\/|\/%|%|\*\*|>>|<<'
+  built_in_function: '\b(length|type|map|filter|round|sum|join)\b'
+  dotname: '{{name}}( ?\. ?{{name}})*'
+contexts:
+  operators:
+    - match: ->>?
+      scope: keyword.operator
+
+    - match: ([=!]=)
+      scope: keyword.operator.comparison
+
+    - match: '\b(xor|or|and|not|!)\b'
+      scope: keyword.operator.logical
+
+    - match: \^\^|&&|\|\||\||\^
+      scope: keyword.operator.bitwise
+
+    - match: '[&^|]='
+      scope: keyword.operator.assignment
+
+    - match: '({{math_op}})?='
+      scope: keyword.operator.assignment
+
+    - match: '{{math_op}}(?!=)'
+      scope: keyword.operator.arithmetic
+
+    - match: ([<>]=?)
+      scope: keyword.operator.comparison
+
+    - match: '[\?@&^|]|(\.\.[.*])'
+      scope: keyword.operator
+
+    - match: ':,'
+      scope: punctuation.separator
+
+    - match: ';'
+      scope: punctuation.terminator
+
+  literals:
+    - match: '\b0x[A-Fa-f0-9_]+'
+      scope: constant.numeric.integer.hexadecimal
+
+    - match: '\b0o[0-7_]+'
+      scope: constant.numeric.integer.octal
+
+    - match: '\b0b[01_]+'
+      scope: constant.numeric.integer.binary
+
+    - match: '\b(-)?[0-9._]+(e[0-9._]+)?\b'
+      scope: constant.numeric
+
+    - match: '(-)?(:[iI][nN][fF]:|:[nN][aA][nN]:)'
+      scope: support.constant
+
+    - match: "[\"']"
+      scope: punctuation.definition.string.begin
+      push: string
+
+    - match: ':[bB][yY][tT][eE][sS]:[A-Fa-f0-9_]+'
+      scope: support.constant
+
+    - match: ':[bB][aA][sS][eE]64:[0-9A-Za-z\+\/]+=*'
+      scope: support.constant
+
+  comments:
+    - match: '/\*'
+      scope: punctuation.definition.comment.begin
+      push: block_comment
+
+    - match: '//'
+      scope: punctuation.definition.comment.begin
+      push: line_comment
+
+  keywords:
+    - match: '\bself\b'
+      scope: variable.language
+
+    - match: '\b(if|elif|else)\b'
+      scope: keyword.control.conditional
+
+    - match: '\bclass\b'
+      scope: keyword.control
+      push: cls_name
+
+    - match: '\bstruct\b'
+      scope: keyword.control
+      push: struct_name
+
+    - match: '\b(import|from)\b'
+      scope: keyword.control.import
+      # push: imports
+
+    - match: '\bs?fn\b'
+      scope: keyword.control
+      push: fn_name
+
+    - match: '\b(for|while|using|try|handle|ignore|ensure|throw)\b'
+      scope: keyword.control
+
+    - match: '\b(async|pub|let|return|break|continue|assert|del|await)\b'
+      scope: keyword.other
+
+    - match: '\.'
+      scope: punctuation.accessor
+
+    - match: '\bas\b'
+      scope: keyword.other
+      push: typing
+
+  brackets_context:
+    - match: '<\|'
+      scope: punctuation.section.set.begin
+      push: set_
+
+    - match: '\('
+      scope: punctuation.section.parens.begin
+      push: parens
+
+    - match: '\)'
+      scope: invalid.illegal
+
+    - match: '\{'
+      scope: punctuation.section.braces.begin
+      push: braces
+
+    - match: '\}'
+      scope: invalid.illegal
+
+    - match: '\['
+      scope: punctuation.section.brackets.begin
+      push: brackets
+
+    - match: '\]'
+      scope: invalid.illegal
+
+  other:
+    - match: '{{built_in_function}}(?=\()'
+      scope: support.function.builtin
+      push: fn_call_st
+
+    - match: '(?<=using) *\w+(?= *:)'
+      scope: entity.name
+
+    - match: '\w+(?=\()'
+      scope: variable.function
+      push: fn_call_st
+
+    - match: '(ns) ({{name}})'
+      captures:
+        1: keyword.control
+        2: entity.name.type
+
+  main:
+    - include: comments
+    - include: brackets_context
+    - include: operators
+    - include: literals
+    - include: keywords
+    - include: other
+
+  set_:
+    - meta_scope: source.flux
+    - match: '\|>'
+      scope: punctuation.section.set.end
+      pop: true
+    - include: main
+
+  braces:
+    - meta_scope: source.flux
+    - match: '\}'
+      pop: true
+      scope: punctuation.section.braces.end
+    - include: main
+
+  brackets:
+    - meta_scope: source.flux
+    - match: '\]'
+      pop: true
+      scope: punctuation.section.brackets.end
+    - include: main
+
+  parens:
+    - match: '\)'
+      pop: true
+      scope: punctuation.section.parens.end
+    - include: main
+
+  typing:
+    - match: '({{dotname}})(\[)'
+      captures:
+        1: entity.name.type
+        2: punctuation.section.brackets.begin
+      set: typing_index
+
+    - match: '{{dotname}}'
+      scope: entity.name.type
+      pop: true
+
+  typing_index:
+    - match: '\]'
+      scope: punctuation.section.brackets.end
+      pop: true
+
+    - match: ','
+      scope: punctuation.separator
+
+    - match: '({{dotname}})(\[)'
+      captures:
+        1: entity.name.type
+        2: punctuation.section.brackets.begin
+      push: typing_index
+
+    - match: '{{dotname}}'
+      scope: entity.name.type
+
+  struct_name:
+    - match: '{{name}}'
+      scope: entity.name.type
+      pop: true
+
+  cls_name:
+    - match: '{{name}}'
+      scope: entity.name.type
+    - match: '{'
+      scope: punctuation.section.braces.begin
+      set: cls_body
+
+  cls_body:
+    - match: '}'
+      scope: punctuation.section.braces.end
+      pop: true
+
+    - match: '\W(init) ?(\()'
+      captures:
+        1: keyword.control
+        2: punctuation.section.parens.begin
+      push: fn_args
+
+    - match: '\bopfn\b'
+      scope: keyword.control
+      push: opfn_head
+
+    - match: '\W(get)\W({{name}}) ?(\()'
+      captures:
+        1: keyword.control
+        2: entity.name.function
+        3: punctuation.section.parens.begin
+      push: fn_args
+
+    - match: '\W(set)\W({{name}}) ?(\()'
+      captures:
+        1: keyword.control
+        2: entity.name.function
+        3: punctuation.section.parens.begin
+      push: fn_args
+
+    - include: main
+
+  opfn_head:
+    - include: operators
+    - match: '\bi?as\b'
+      scope: keyword.other
+      set: typing
+
+    - match: '\['
+      scope: punctuation.section.brackets.begin
+      push: opfn_brackets
+
+    - match: '\('
+      scope: punctuation.section.parens.begin
+      push: opfn_parens
+
+    - match: '{'
+      scope: punctuation.section.braces.begin
+      pop: true
+
+    - match: '}'
+      scope: punctuation.section.braces.end
+      pop: true
+
+    - match: '\)'
+      scope: punctuation.section.parens.end
+      pop: true
+
+    - match: '\]'
+      scope: punctuation.section.brackets.end
+      pop: true
+
+    - match: ';'
+      scope: punctuation.terminator
+      pop: true
+
+    - include: cls_body
+
+    - match: '{{name}}'
+      scope: variable.parameter
+
+  opfn_brackets:
+    - include: opfn_head
+    - include: brackets
+
+
+  opfn_parens:
+    - include: opfn_head
+    - include: parens
+
+
+  fn_name:
+    - match: '{{name}}'
+      scope: entity.name.function
+
+    - match: '\('
+      scope: punctuation.section.parens.begin
+      set: fn_args
+
+  fn_args:
+    - match: '\('
+      push: parens
+
+    - match: ','
+      scope: punctuation.separator
+
+    - match: '\bas\b'
+      scope: keyword.other
+      push: typing
+
+    - match: 'self'
+      scope: variable.language
+
+    - match: '{{name}}'
+      scope: variable.parameter
+
+    - match: '\.\.[.*]{{name}}'
+      scope: variable.parameter
+
+    - match: '='
+      scope: keyword.operator.assignment
+      set: fn_arg
+
+    - match: '\)'
+      pop: true
+
+  fn_arg:
+    - match: '\)'
+      scope: punctuation.section.parens.end
+      pop: true
+
+    - include: main
+
+    - match: ','
+      scope: punctuation.separator.sequence
+      set: fn_args
+
+  fn_call_st:
+    - match: '\('
+      set: fn_call_arg
+      scope: punctuation.section.parens.end
+
+    - match: '\(\)'
+      scope: punctuation.section.parens
+      pop: true
+
+
+  fn_call_arg:
+    - match: '\('
+      push: parens
+
+    - match: '\bas\b'
+      scope: keyword.other
+      push: typing
+
+    - match: '\)'
+      scope: punctuation.section.parens.end
+      pop: true
+
+    - match: '\)'
+      scope: punctuation.section.parens.end
+      pop: true
+
+    - include: main
+
+    - match: ','
+      scope: punctuation.separator.sequence
+      set: fn_call_arg
+
+
+  string:
+    - meta_scope: string.quoted.double
+
+    - match: '\\.'
+      scope: constant.character.escape
+
+    - match: '"'
+      scope: punctuation.definition.string.end
+      pop: true
+
+    - match: '{'
+      scope: punctuation.section.braces.begin
+      embed: main
+      embed_scope: source.flux
+      escape: '}'
+      escape_captures:
+        0: punctuation.section.braces.end
+
+  string_format:
+    - meta_scope: markup.raw.inline
+
+    - match: '}'
+      scope: punctuation.section.braces.end
+      pop: true
+
+  line_comment:
+    - meta_scope: comment.line.double-slash
+    - match: $
+      pop: true
+
+  block_comment:
+    - meta_scope: comment.block
+    - match: '\*/'
+      scope: punctuation.definition.comment.end
+      pop: true
+
+
