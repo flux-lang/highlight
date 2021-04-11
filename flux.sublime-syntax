@@ -15,7 +15,7 @@ contexts:
     - match: ->>?
       scope: keyword.operator
 
-    - match: ([=!]=)
+    - match: (==|!=)
       scope: keyword.operator.comparison
 
     - match: '\b(xor|or|and|not|!)\b'
@@ -195,6 +195,9 @@ contexts:
     - include: main
 
   typing:
+    - match: '\bgentype\b'
+      scope: keyword.other
+
     - match: '({{dotname}})(\[)'
       captures:
         1: entity.name.type
@@ -213,6 +216,9 @@ contexts:
     - match: ','
       scope: punctuation.separator
 
+    - match: '\bgentype\b'
+      scope: keyword.other
+
     - match: '({{dotname}})(\[)'
       captures:
         1: entity.name.type
@@ -228,8 +234,12 @@ contexts:
       pop: true
 
   cls_name:
+    - match: '\bfrom\b'
+      scope: keyword.control
+
     - match: '{{name}}'
       scope: entity.name.type
+
     - match: '{'
       scope: punctuation.section.braces.begin
       set: cls_body
