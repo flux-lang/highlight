@@ -8,7 +8,7 @@ scope: source.flux
 variables:
   name: '\b[A-Za-z_]\w*\b'
   math_op: '\+|-|\*|\/|\/%|%|\*\*|>>|<<'
-  built_in_function: '\b(length|type|map|filter|round|sum|join)\b'
+  built_in_function: '\b(length|type|map|filter|round|sum|join|swap)\b'
   dotname: '{{name}}( ?\. ?{{name}})*'
 contexts:
   operators:
