@@ -99,7 +99,7 @@ contexts:
       scope: keyword.control.import
       # push: imports
 
-    - match: '\bs?fn\b'
+    - match: '\bfn\b'
       scope: keyword.control
       push: fn_name
 
@@ -249,7 +249,12 @@ contexts:
       scope: punctuation.section.braces.end
       pop: true
 
-    - match: '\W(init) ?(\()'
+    - match: '\b(sfn) ({{name}})'
+      captures:
+        1: keyword.control
+        2: support.function.builtin
+
+    - match: '\b(init) ?(\()'
       captures:
         1: keyword.control
         2: punctuation.section.parens.begin
