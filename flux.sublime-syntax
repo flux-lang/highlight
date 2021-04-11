@@ -106,7 +106,7 @@ contexts:
     - match: '\b(for|while|using|try|handle|ignore|ensure|throw)\b'
       scope: keyword.control
 
-    - match: '\b(async|pub|let|return|break|continue|assert|del|await)\b'
+    - match: '\b(async|pub|let|const|return|break|continue|assert|del|await)\b'
       scope: keyword.other
 
     - match: '\.'
@@ -195,8 +195,13 @@ contexts:
     - include: main
 
   typing:
-    - match: '\bgentype\b'
-      scope: keyword.other
+    # - include: literals
+
+    - match: '\b(gentype)\b(\[)'
+      captures:
+        1: keyword.other
+        2: punctuation.section.brackets.begin
+      set: typing_index
 
     - match: '({{dotname}})(\[)'
       captures:
@@ -216,8 +221,13 @@ contexts:
     - match: ','
       scope: punctuation.separator
 
-    - match: '\bgentype\b'
-      scope: keyword.other
+    - include: literals
+
+    - match: '\b(gentype)\b(\[)'
+      captures:
+        1: keyword.other
+        2: punctuation.section.brackets.begin
+      push: typing_index
 
     - match: '({{dotname}})(\[)'
       captures:
