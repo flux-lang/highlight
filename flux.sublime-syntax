@@ -15,7 +15,7 @@ contexts:
     - match: ->>?
       scope: keyword.operator
 
-    - match: (==|!=)
+    - match: ([=!]=)
       scope: keyword.operator.comparison
 
     - match: '\b(xor|or|and|not|!)\b'
