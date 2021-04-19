@@ -65,7 +65,7 @@ contexts:
       scope: punctuation.definition.string.begin
       push: string_quote
 
-    - match: "\""
+    - match: "'"
       scope: punctuation.definition.string.begin
       push: string_apostrophe
 
@@ -343,7 +343,6 @@ contexts:
   opfn_parens:
     - include: opfn_head
     - include: parens
-
 
   fn_name:
     - match: '{{name}}'
