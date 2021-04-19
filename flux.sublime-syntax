@@ -55,7 +55,7 @@ contexts:
     - match: '\b0b[01_]+'
       scope: constant.numeric.integer.binary
 
-    - match: '\b(-)?[0-9._]+(e[0-9._]+)?\b'
+    - match: '\b(-)?[0-9._]+(e(-)?[0-9._]+)?\b'
       scope: constant.numeric
 
     - match: '(-)?(:[iI][nN][fF]:|:[nN][aA][nN]:)'
