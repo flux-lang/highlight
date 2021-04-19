@@ -61,6 +61,9 @@ contexts:
     - match: '(-)?(:[iI][nN][fF]:|:[nN][aA][nN]:)'
       scope: support.constant
 
+    - match: '\b(true|false|none)\b'
+      scope: support.constant
+
     - match: "\""
       scope: punctuation.definition.string.begin
       push: string_quote
