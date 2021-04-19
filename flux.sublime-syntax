@@ -61,9 +61,13 @@ contexts:
     - match: '(-)?(:[iI][nN][fF]:|:[nN][aA][nN]:)'
       scope: support.constant
 
-    - match: "[\"']"
+    - match: "\""
       scope: punctuation.definition.string.begin
-      push: string
+      push: string_quote
+
+    - match: "\""
+      scope: punctuation.definition.string.begin
+      push: string_apostrophe
 
     - match: ':[bB][yY][tT][eE][sS]:[A-Fa-f0-9_]+'
       scope: support.constant
@@ -420,7 +424,7 @@ contexts:
       set: fn_call_arg
 
 
-  string:
+  string_quote:
     - meta_scope: string.quoted.double
 
     - match: '\\.'
@@ -438,12 +442,23 @@ contexts:
       escape_captures:
         0: punctuation.section.braces.end
 
-  string_format:
-    - meta_scope: markup.raw.inline
+  string_apostrophe:
+    - meta_scope: string.quoted.double
 
-    - match: '}'
-      scope: punctuation.section.braces.end
+    - match: '\\.'
+      scope: constant.character.escape
+
+    - match: "'"
+      scope: punctuation.definition.string.end
       pop: true
+
+    - match: '{'
+      scope: punctuation.section.braces.begin
+      embed: main
+      embed_scope: source.flux
+      escape: '}'
+      escape_captures:
+        0: punctuation.section.braces.end
 
   line_comment:
     - meta_scope: comment.line.double-slash
