@@ -36,7 +36,7 @@ contexts:
     - match: ([<>]=?)
       scope: keyword.operator.comparison
 
-    - match: '[\?@&^|]|(\.\.[.*])'
+    - match: '[\?@&^~|]|(\.\.[.*])'
       scope: keyword.operator
 
     - match: ':,'
